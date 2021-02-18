@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title> 🍇포도알 잡기🍇 </title>
+    <style>
+      table {
+          border-collapse : collapse;
+          font-family: Verdana, Geneva, Tahoma, sans-serif;
+          color : #E2A9F3
+      }
+      td {
+          text-align: right;
+          padding: 5px;
+          opacity : 0.3;
+      }
+      .thismonth {
+          color : #D358F7; opacity : 1.0 ;
+      }
+      .w0 {
+          color :#B40486;
+      }
+      .w6 {
+          color :#3104B4 ;
+      }
+      .theday {
+          text-decoration : underline;
+      }
+      #time { 
+        font-size: 20pt;
+	      font-family: sans-serif;
+	      color: #E093FA;
+      }
+
+    </style>
+
+
+    <script>
+      var yearInput = undefined;
+      var monthInput = undefined;
+      var dateInput = undefined;
+      var calendarContainer = undefined;
+
+
+      function init() {
+	    yearInput = document.getElementById("year");
+	    monthInput = document.getElementById("month");
+	    dateInput = document.getElementById("date");      
+	    calendarContainer = document.getElementById("calendar-container");
+
+	    yearInput.addEventListener("change", updateCalendar);
+	    monthInput.addEventListener("change", updateCalendar);
+	    dateInput.addEventListener("change", updateCalendar);
+
+	    var today = new Date();
+	    var year = today.getFullYear();
+	    var month = today.getMonth();
+	    var date = today.getDate();
+
+	    yearInput.value = year;
+	    monthInput.value = month + 1;
+	    dateInput.value = date;
+	  
+	    createCalendar(year, month, date);
+      startMyClock();
+      }
+      
+      function updateCalendar() {
+	    var year = yearInput.value;
+	    var month = monthInput.value - 1;
+	    var date = dateInput.value;
+
+	    calendarContainer.innerHTML = "";
+	    createCalendar(year, month, date);
+      }
+      
+      function createCalendar(year, month, day) {
+	    var weeknames = ['일', '월', '화', '수', '목', '금', '토'];
+
+	    var theday = new Date(year, month, day);
+	    theday.setFullYear(year);
+	    var d = theday.getDate();
+	    var yyyy = theday.getFullYear();
+	    var m = theday.getMonth() + 1;
+	    var w = theday.getDay();
+
+	    var h2 = document.createElement("h2");
+	    calendarContainer.appendChild(h2);
+	    h2.innerHTML = yyyy + "년 " + m + "월";
+
+	    var date = new Date(yyyy, m-1, 1);
+	    date.setDate(date.getDate() - date.getDay())
+
+	    var table = document.createElement("table");
+	    calendarContainer.appendChild(table);
+	      
+	    var thead = document.createElement("thead");
+	    table.appendChild(thead);
+	    for(var j=0; j<7; j++) {
+          var th = document.createElement(`th`);
+          th.innerHTML = weeknames[j];
+          thead.appendChild(th);
+	    }
+        
+      var StopForLoop = false;
+        
+	    for(var i=0; i<6; i++) {
+          var tr = document.createElement("tr");
+          for(var j=0; j<7; j++) {
+		    cls = 'w' + date.getDay();
+		    
+            if (date.toDateString() == theday.toDateString()) {
+              cls += ' ' + 'theday';
+		    } 
+            
+            if (date.getMonth() == theday.getMonth()) {
+              cls += ' ' + 'thismonth';
+		    } 
+
+		    var td = document.createElement("td");
+		    td.setAttribute("class",  cls);
+		    td.innerHTML = date.getDate();
+
+            tr.appendChild(td); 
+
+            if( date.getMonth() == theday.getMonth() ) {
+              var Last = new Date(theday.getYear(),theday.getMonth()+1,0);
+              if( Last.getDate() == date.getDate() ) {
+                StopForLoop = true;
+              }
+            }
+
+            date.setDate(date.getDate()+1);
+
+          }
+	      table.appendChild(tr);
+          if( StopForLoop ) break;
+	      }
+
+        MyTicket(year, month, day);
+      }
+
+
+      function MySelect(exampleform) {
+        var ithTicket = 1;
+
+        for (var i=0; i<exampleform.ticket.length; i++) {
+          if( exampleform.ticket[i].checked ) {
+            ithTicket = i+1;
+            break;
+          }
+        }
+        alert( ithTicket + " 번째 공연을 선택하셨습니다. 🙆‍♀️🍇🍇🍇🙆‍♀️" );
+      }
+
+
+      function MyTicket(year, month, date) {
+
+        let TicketInfo = [
+        // date, ArrLength, [TicketName],                                     [Time]
+          [1,    2,         ['뮤지컬 <더 모먼트>', '뮤지컬 <마마, 돈크라이>'], ['PM02:00', 'PM02:00'] ],
+          [2,    1,         ['연극 <이카이노의 눈>'],                         ['PM02:00']            ],
+          [29,   1,         ['뮤지컬 <어쩌면 해피엔딩>'],                     ['PM02:00']],
+          [30,   1,         ['티켓 오픈 없음']   ,                            ['00:00']],
+          [31,   1,         ['티켓 오픈 없음'],                               ['00:00']]
+        ];
+
+        var str = '<br>--- 오늘의 티켓 오픈 ---<br>'
+        
+        str = str + '<form name="preform">';
+        for(var i=0; i<TicketInfo.length; i++) {
+          if( TicketInfo[i][0] == date ) {
+            for(var j=0; j<TicketInfo[i][1]; j++) {
+              str = str + '<input type="radio" name="ticket"/>  공연명: '+TicketInfo[i][2][j]+'  (시간: '+TicketInfo[i][3][j]+')<br>';
+            }
+            break;
+          }
+        }
+        str = str + '</form>'
+        str = str + '<input type="button" value="티켓 선택" onclick="MySelect(preform)">'
+        
+        document.getElementById("MyRadioButton").innerHTML = str;
+      }
+
+      function startMyClock() {
+	    var today = new Date();
+	    var yyyy = today.getFullYear();
+	    var mm = today.getMonth() + 1;
+	    var dd = today.getDate();
+	    var h = today.getHours();
+	    var m = today.getMinutes();
+	    var s = today.getSeconds();
+	    h = checkTime(h);
+	    m = checkTime(m);
+	    s = checkTime(s);
+
+	    document.getElementById('time').innerHTML = "<br>" + h + "시" + m + "분" + s + "초";
+
+	    var t = setTimeout(startMyClock, 500);
+      }
+
+      
+      function checkTime(i) {
+	    if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+	    return i;
+      }
+      
+
+    </script>
+  </head>
+
+  <body onload="init()">
+    <input id="year" type="number" >
+    <input id="month" type="number" min="1" max="12">
+    <input id="date" type="number" min="1" max="31">
+
+    <span id="calendar-container"></span>
+    <span id="MyRadioButton"></span>
+    <span id="time"></span>
+    <br>
+    <a href="http://ticket.interpark.com/"> 🍇예매하기🍇 </a>
+
+    <br> <br> <br> <br>
+    <h3> 기능 소개 및 사용 방법 </h3>
+    <ul style="list-style-type:circle">
+        <li>기능 <br>
+            해당 날짜에 오픈되는 공연 목록을 보여주고 관람하고자 했던 공연 티켓팅을 놓치지 않을 수 있도록 한다. </li>
+        <br>
+        <li>사용 방법<br>
+            스핀버튼으로 날짜를 설정하면 달력 하단에 '오늘의 티켓 오픈' 목록이 뜬다. <br>
+            원하는 것을 선택한 후 '티켓 선택' 버튼을 누르면 'n번째 공연을 선택하셨습니다. 🙆‍♀️🍇🍇🍇🙆‍♀️'라는 문구가 뜬다.<br>
+            이를 통해 자신이 선택한 공연을 확인 후 시간을 확인하고 '🍇예매하기🍇'를 누르면 예매사이트로 이동한다.<br></li>
+    </ul>
+  </body>
+</html>
