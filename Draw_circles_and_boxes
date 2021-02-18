@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title> drawing </title>
+  </head>
+  <body>
+    <div id="svg">
+      <h4 style="margin-left:207px;"> 원 그리기 </h4>
+      <svg class="svg0"></svg>
+      <h4 style="margin-left:190px"> 직사각형 그리기 </h4>
+      <svg class="svg0"> </svg>
+    </div>
+    <script>
+    
+      var svg = document.getElementById("svg");
+      for(var i=0; i<2; i++) {
+        svg.getElementsByClassName("svg0")[i].style.border = "1px solid navy";
+        svg.getElementsByClassName("svg0")[i].setAttribute("width", 500);
+        svg.getElementsByClassName("svg0")[i].setAttribute("height", 300);
+      }
+       svg.getElementsByClassName("svg0")[0].addEventListener("mousedown", drawCircle);
+        svg.getElementsByClassName("svg0")[1].addEventListener("mousedown", drawRect);
+        var target = null;
+
+      function drawCircle(evt) {
+          var x = evt.offsetX;
+          var y = evt.offsetY;
+          var r = 20;
+          var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          circle.setAttribute("cx", x);
+          circle.setAttribute("cy", y);
+          circle.setAttribute("r", r);
+          circle.addEventListener("mouseover", preventDraw);
+          circle.addEventListener("mouseout", allowDraw);
+          circle.addEventListener("mousedown", start_move);
+          svg.getElementsByClassName("svg0")[0].appendChild(circle);
+      }
+
+      function drawRect(evt) {
+          var x = evt.offsetX;
+          var y = evt.offsetY;
+          var width = 60;
+          var height = 40;
+          var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+          rect.setAttribute("x", x);
+          rect.setAttribute("y", y);
+          rect.setAttribute("width", width);
+          rect.setAttribute("height", height);
+          rect.addEventListener("mouseover", preventDraw);
+          rect.addEventListener("mouseout", allowDraw);
+          rect.addEventListener("mousedown", start_move);
+          svg.getElementsByClassName("svg0")[1].appendChild(rect);    
+      }
+
+      function preventDraw() {
+          this.style.fill = "#011BA2";
+          svg.getElementsByClassName("svg0")[0].removeEventListener("mousedown", drawCircle);
+          svg.getElementsByClassName("svg0")[1].removeEventListener("mousedown", drawRect);
+      }
+
+      function allowDraw() {
+          this.style.fill = "#010E6D";
+          svg.getElementsByClassName("svg0")[0].addEventListener("mousedown", drawCircle);
+          svg.getElementsByClassName("svg0")[1].addEventListener("mousedown", drawRect);
+      }
+
+      function start_move(evt) {
+          target = this;
+          this.style.fill = "#3D50FD";
+          this.setAttribute("r", 30);
+          this.setAttribute("width", 48);
+          this.setAttribute("height", 32);
+          for(var i=0; i<2; i++) {
+            svg.getElementsByClassName("svg0")[i].addEventListener("mousemove", move);
+          }
+          this.addEventListener("mouseup", end_move);
+      }
+
+      function move(evt) {
+          target.setAttribute("cx", evt.offsetX);
+          target.setAttribute("cy", evt.offsetY);  
+          target.setAttribute("x", evt.offsetX);
+          target.setAttribute("y", evt.offsetY);  
+      }
+
+      function end_move() {
+          target = "null"
+          this.setAttribute("r", 20);
+          this.setAttribute("width", 60);
+          this.setAttribute("height", 40);
+          for(var i=0; i<2; i++) {
+             svg.getElementsByClassName("svg0")[i].removeEventListener("mousemove", move);
+             svg.getElementsByClassName("svg0")[i].removeEventListener("mouseup", end_move);
+          }
+      }
+
+    </script>
+
+  </body>
+</html>
